@@ -12,6 +12,12 @@
   "author": {
     "name": "Maximilian Wehrstedt"
   },
+  "keywords": [
+    "home assistant",
+    "smart home",
+    "custom components",
+    "hacs"
+  ],
   "license": "MIT",
   "scripts": {
     "compile": "tsc -p ./"
