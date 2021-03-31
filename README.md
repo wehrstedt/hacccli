@@ -1,6 +1,15 @@
 # hacccli - Home Assistant Custom Components Command Line Interface
 A Command Line Interface for managing home assistant custom components.
 
+## Installation
+```sh
+npm install -g hacccli
+```
+
+or
+```sh
+yarn global add hacccli
+```
 ## Why should you use hacccli?
 With hacccli, you can easily add and automatically update custom components for your home assistant instance.
 
