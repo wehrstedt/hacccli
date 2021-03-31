@@ -116,12 +116,12 @@ export class Crawler {
 				if (extname(localPath) === ".zip") {
 					const unzippedPath = join(process.cwd(), basename(localPath, ".zip"));
 					await Crawler.unzip(localPath, unzippedPath);
-					rm("-r", localPath);
+					rm("-rf", localPath);
 
 					if (localPath.endsWith("SourceCode.zip")) {
 						const folders = readdirSync(unzippedPath);
 						mv(join(unzippedPath, folders[0], "*"), unzippedPath);
-						rm("-r", join(unzippedPath, folders[0]));
+						rm("-rf", join(unzippedPath, folders[0]));
 					}
 
 					localPath = unzippedPath;
@@ -139,7 +139,7 @@ export class Crawler {
 
 			const targetPath = join(component.localPath, component.name);
 			if (existsSync(targetPath)) {
-				rm("-r", targetPath);
+				rm("-rf", targetPath);
 			}
 
 			mkdir("-p", targetPath);
@@ -153,7 +153,7 @@ export class Crawler {
 
 			mv(sourcePath, targetPath);
 			if (folderToDelete) {
-				rm("-r", folderToDelete);
+				rm("-rf", folderToDelete);
 			}
 
 			this.storage.updateCustomComponent(component);
@@ -169,7 +169,7 @@ export class Crawler {
 
 	public static async Download(downloadUrl: string, localPath: string) {
 		if (existsSync(localPath)) {
-			rm("-r", localPath);
+			rm("-rf", localPath);
 		}
 
 		const filesBefore = readdirSync(dirname(localPath));
@@ -212,19 +212,19 @@ export class Crawler {
 
 		const localPath = join(process.cwd(), branchName + ".zip");
 		if (existsSync(localPath)) {
-			rm("-r", localPath);
+			rm("-rf", localPath);
 		}
 
 		writeFileSync(localPath, Buffer.from(response.data as ArrayBuffer));
 
 		const unzippedPath = join(process.cwd(), "unzipped");
 		await this.unzip(localPath, unzippedPath);
-		rm("-r", localPath);
+		rm("-rf", localPath);
 
 		// If a branch is downloaded, the content will be inside of a subdirectory
 		const folders = readdirSync(unzippedPath);
 		mv(join(unzippedPath, folders[0], "/*"), unzippedPath);
-		rm("-r", join(unzippedPath, folders[0]));
+		rm("-rf", join(unzippedPath, folders[0]));
 		return unzippedPath;
 	}
 
@@ -284,7 +284,7 @@ export class Crawler {
 	public static async unzip(filePath: string, outputPath: string) {
 		return new Promise<void>(async (resolve, reject) => {
 			if (existsSync(outputPath)) {
-				rm("-r", outputPath);
+				rm("-rf", outputPath);
 			}
 
 			createReadStream(filePath)

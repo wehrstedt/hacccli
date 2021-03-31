@@ -177,7 +177,7 @@ async function downloadLatestRelease(url: string, hacsJSON?: { [index: string]: 
 		if (localPath.endsWith("SourceCode.zip")) {
 			const folders = readdirSync(unzippedPath);
 			mv(join(unzippedPath, folders[0], "*"), unzippedPath);
-			rm("-r", join(unzippedPath, folders[0]));
+			rm("-rf", join(unzippedPath, folders[0]));
 		}
 
 		localPath = unzippedPath;
