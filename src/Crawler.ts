@@ -206,11 +206,13 @@ export class Crawler {
 
 		const unzippedPath = join(process.cwd(), "unzipped");
 		await this.unzip(localPath, unzippedPath);
-		unlinkSync(localPath);
+		rm("-r", localPath);
 
 		// If a branch is downloaded, the content will be inside of a subdirectory
 		const folders = readdirSync(unzippedPath);
-		return join(unzippedPath, folders[0]);
+		mv(join(unzippedPath, folders[0], "/*"), unzippedPath);
+		rm("-r", join(unzippedPath, folders[0]));
+		return unzippedPath;
 	}
 
 	public static async FetchComponents(interactive: boolean) {
