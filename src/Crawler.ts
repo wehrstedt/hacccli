@@ -24,12 +24,27 @@ export class Crawler {
 	public static async DownloadComponent(component: CustomComponent) {
 		let localPath = "";
 		if (component.trackVersionBy.type === "branch") {
-			localPath = await Crawler.DownloadBranch(component.url, component.trackVersionBy.branchName);
-			const matches = localPath.match(/.+-(.+)$/);
-			if (matches) {
-				component.version = matches[1];
-			} else {
-				throw new Error("Cannot determine version");
+			let downloadBranch = true;
+			if (component.version) {
+				const response = await this.octokit.repos.getBranch({
+					owner: this.ParseURL(component.url).owner,
+					repo: this.ParseURL(component.url).repo,
+					branch: component.trackVersionBy.branchName
+				});
+
+				if (response.data.commit.sha.startsWith(component.version)) {
+					downloadBranch = false;
+				}
+			}
+
+			if (downloadBranch) {
+				localPath = await Crawler.DownloadBranch(component.url, component.trackVersionBy.branchName);
+				const matches = localPath.match(/.+-(.+)$/);
+				if (matches) {
+					component.version = matches[1];
+				} else {
+					throw new Error("Cannot determine version");
+				}
 			}
 		} else {
 			let releaseToDownload;
