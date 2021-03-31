@@ -7,8 +7,12 @@ import { mv, rm } from "shelljs";
 import { sync as globSync } from "glob";
 import { CustomComponent, TrackVersionByBranch, TrackVersionByReleases, TrackVersionType, Storage } from "../Storage";
 import { Crawler } from "../Crawler";
+import { option, parse } from "args";
 
 registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'));
+
+option("fetch", "Refetch all added custom components and download newest version (regarding configured semver)", false);
+const args = parse(process.argv);
 
 const storage = new Storage();
 let octokit = new Octokit();
@@ -330,12 +334,14 @@ async function addNewComponent() {
 		"fetch registered components"
 	];
 
-	const nextStep = (await prompt([{
-		name: "nextStep",
-		type: "list",
-		message: "What do you want to do?",
-		choices: steps
-	}])).nextStep;
+	const nextStep = args.fetch
+		? steps[1]
+		: (await prompt([{
+			name: "nextStep",
+			type: "list",
+			message: "What do you want to do?",
+			choices: steps
+		}])).nextStep;
 
 	switch (nextStep) {
 		case steps[0]:
