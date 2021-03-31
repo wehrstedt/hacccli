@@ -6,6 +6,12 @@
     "haccli": "lib/cli/cli.js",
     "hacccli": "libc/cli/cli.js"
   },
+  "repository": {
+    "url": "https://github.com/wehrstedt/hacccli"
+  },
+  "author": {
+    "name": "Maximilian Wehrstedt"
+  },
   "license": "MIT",
   "scripts": {
     "compile": "tsc -p ./"
