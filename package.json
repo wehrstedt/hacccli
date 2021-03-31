@@ -21,7 +21,8 @@
   "license": "MIT",
   "scripts": {
     "compile": "tsc -p ./",
-    "prepublishOnly": "npm run compile"
+    "convert-crlf": "crlf --set=LF lib/**/*.js",
+    "prepublishOnly": "npm run compile && npm run convert-crlf"
   },
   "devDependencies": {
     "@types/args": "^3.0.0",
@@ -32,6 +33,7 @@
     "@types/semver": "^7.3.4",
     "@types/shelljs": "^0.8.8",
     "@types/unzipper": "^0.10.3",
+    "crlf": "^1.1.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.3"
   },

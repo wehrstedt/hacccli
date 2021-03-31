@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { prompt, ui, registerPrompt } from "inquirer";
 import { Octokit } from "@octokit/rest";
 import { dirname, join, normalize, basename, extname, relative } from "path";
