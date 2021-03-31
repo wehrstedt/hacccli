@@ -1,0 +1,30 @@
+{
+	// Verwendet IntelliSense zum Ermitteln möglicher Attribute.
+	// Zeigen Sie auf vorhandene Attribute, um die zugehörigen Beschreibungen anzuzeigen.
+	// Weitere Informationen finden Sie unter https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+            "name": "Launch: Current Typescript File",
+            "type": "node",
+            "request": "launch",
+            "args": [
+                "${file}"
+            ],
+            "runtimeArgs": [
+                "--nolazy",
+                "-r",
+                "ts-node/register"
+            ],
+            "env": {
+                "TS_NODE_PROJECT": "${workspaceFolder}/tsconfig.json",
+                "NODE_CONFIG_ENV": "test"
+            },
+            "skipFiles": [
+                "<node_internals>/**/*.js"
+            ],
+            "sourceMaps": true,
+            "protocol": "inspector",
+        }
+	]
+}
