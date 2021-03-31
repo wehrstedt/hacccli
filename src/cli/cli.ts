@@ -349,7 +349,7 @@ async function addNewComponent() {
 			break;
 
 		case steps[1]:
-			await Crawler.FetchComponents();
+			await Crawler.FetchComponents(!args.fetch);
 			break;
 	}
 

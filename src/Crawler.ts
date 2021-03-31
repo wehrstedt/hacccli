@@ -7,6 +7,7 @@ import { mkdir, mv, rm } from "shelljs";
 import { Extract } from "unzipper";
 import { CustomComponent, Storage, TrackVersionByReleases } from "./Storage";
 import { lt, gt, minor, valid, patch } from "semver";
+import { prompt } from "inquirer";
 
 export class Crawler {
 
@@ -21,7 +22,7 @@ export class Crawler {
 		});
 	}
 
-	public static async DownloadComponent(component: CustomComponent) {
+	public static async DownloadComponent(component: CustomComponent, interactive: boolean = false) {
 		let localPath = "";
 		if (component.trackVersionBy.type === "branch") {
 			let downloadBranch = true;
@@ -62,6 +63,26 @@ export class Crawler {
 						releaseToDownload = allGreaterReleases.filter(r => minor(r.tag_name) > minor(component.version as string))[0];
 					} else {
 						releaseToDownload = allGreaterReleases.filter(r => patch(r.tag_name) > patch(component.version as string))[0];
+					}
+
+					if (!releaseToDownload) {
+						if (interactive) {
+							// There are new versions available, but non of these matches component.trackVersionBy.semver
+							// ask the user if he wants to upgrade
+							const newVersionTagName = await prompt([{
+								name: "newVersionTagName",
+								type: "list",
+								choices: [...allGreaterReleases.map(r => r.tag_name), "<skip>"],
+								message: `The following new releases are available, but none of these matching your constraint <${component.trackVersionBy.semver}> for current installed version '${component.version}'. If you like to upgrade, select the version you like to install. Otherwise, select <skip>:`,
+								default: "<skip>"
+							}]);
+
+							if (newVersionTagName.newVersionTagName !== "<skip>") {
+								releaseToDownload = allGreaterReleases.filter(r => r.tag_name === newVersionTagName.newVersionTagName)[0];
+							}
+						} else {
+							console.log(`New versions available for ${component.name}, but none of these matching your constraint <${component.trackVersionBy.semver}> for current installed version '${component.version}'. Consider to upgrade the custom component by calling the cli-tool and select command 'fetch registered components'.`);
+						}
 					}
 				}
 			} else {
@@ -192,11 +213,11 @@ export class Crawler {
 		return join(unzippedPath, folders[0]);
 	}
 
-	public static async FetchComponents() {
+	public static async FetchComponents(interactive: boolean) {
 		const components = this.storage.getCustomComponents();
 		for (const component of components) {
 			console.log(`Start fetch component ${component.name}`);
-			await this.DownloadComponent(component);
+			await this.DownloadComponent(component, interactive);
 			console.log(`  => Finished.\n`);
 		}
 	}
