@@ -241,6 +241,7 @@ async function addNewComponent() {
 		url: githubUrl,
 		localPath: "",
 		name: "",
+		version: null,
 		trackVersionBy: {} as TrackVersionByBranch | TrackVersionByReleases
 	};
 

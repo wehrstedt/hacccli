@@ -26,27 +26,17 @@ export class Crawler {
 		let localPath = "";
 		const oldVersion = component.version;
 		if (component.trackVersionBy.type === "branch") {
-			let downloadBranch = true;
-			if (component.version) {
-				const response = await this.octokit.repos.getBranch({
-					owner: this.ParseURL(component.url).owner,
-					repo: this.ParseURL(component.url).repo,
-					branch: component.trackVersionBy.branchName
-				});
+			const response = await this.octokit.repos.getBranch({
+				owner: this.ParseURL(component.url).owner,
+				repo: this.ParseURL(component.url).repo,
+				branch: component.trackVersionBy.branchName
+			});
 
-				if (response.data.commit.sha.startsWith(component.version)) {
-					downloadBranch = false;
-				}
-			}
-
+			const commitHash = response.data.commit.sha;
+			const downloadBranch = !component.version || component.version !== commitHash;
 			if (downloadBranch) {
 				localPath = await Crawler.DownloadBranch(component.url, component.trackVersionBy.branchName);
-				const matches = localPath.match(/.+-(.+)$/);
-				if (matches) {
-					component.version = matches[1];
-				} else {
-					throw new Error("Cannot determine version");
-				}
+				component.version = commitHash;
 			}
 		} else {
 			let releaseToDownload;
@@ -69,7 +59,7 @@ export class Crawler {
 						)[0];
 					} else {
 						releaseToDownload = allGreaterReleases.filter(r =>
-							major(r.tag_name) === major(component.version as string) && minor(r.tag_name) === minor(component.version as string) && 
+							major(r.tag_name) === major(component.version as string) && minor(r.tag_name) === minor(component.version as string) &&
 							patch(r.tag_name) > patch(component.version as string)
 						)[0];
 					}
