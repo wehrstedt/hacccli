@@ -53,7 +53,7 @@ export class Storage {
 	private db: JsonDB;
 
 	constructor() {
-		this.db = new JsonDB(new Config("storage", true, false));
+		this.db = new JsonDB(new Config("hacccli-db", true, false));
 		this.db.load();
 	}
 

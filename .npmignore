@@ -2,6 +2,7 @@ node_modules
 config/
 unzipped/
 storage.json
+hacccli-db.json
 lib/
 src/*
 .vscode/

@@ -20,7 +20,8 @@
   ],
   "license": "MIT",
   "scripts": {
-    "compile": "tsc -p ./"
+    "compile": "tsc -p ./",
+    "prepublishOnly": "npm run compile"
   },
   "devDependencies": {
     "@types/args": "^3.0.0",
