@@ -157,7 +157,7 @@ export class Crawler {
 			}
 
 			this.storage.updateCustomComponent(component);
-			if (component.version !== oldVersion) {
+			if (oldVersion !== null && component.version !== oldVersion) {
 				console.log(`${component.name} updated from ${oldVersion} to ${component.version}`);
 			} else {
 				console.log(`${component.name} downloaded to ${targetPath}`);
