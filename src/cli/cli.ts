@@ -308,7 +308,7 @@ async function addNewComponent() {
 	storage.registerCustomComponent(customComponent);
 	await Crawler.DownloadComponent(customComponent);
 
-	console.log("\nDone!")
+	console.log(`\nDone. The custom component ${customComponent.name} was downloaded to '${customComponent.localPath}.'`);
 }
 
 (async () => {

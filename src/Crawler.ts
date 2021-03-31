@@ -6,7 +6,7 @@ import { join, dirname, basename, extname } from "path";
 import { mkdir, mv, rm } from "shelljs";
 import { Extract } from "unzipper";
 import { CustomComponent, Storage, TrackVersionByReleases } from "./Storage";
-import { lt, gt, minor, valid, patch } from "semver";
+import { lt, gt, minor, valid, patch, major } from "semver";
 import { prompt } from "inquirer";
 
 export class Crawler {
@@ -24,6 +24,7 @@ export class Crawler {
 
 	public static async DownloadComponent(component: CustomComponent, interactive: boolean = false) {
 		let localPath = "";
+		const oldVersion = component.version;
 		if (component.trackVersionBy.type === "branch") {
 			let downloadBranch = true;
 			if (component.version) {
@@ -60,9 +61,17 @@ export class Crawler {
 						// no further filtering neccessary. just use the latest version
 						releaseToDownload = allGreaterReleases[0];
 					} else if (component.trackVersionBy.semver === "minor") {
-						releaseToDownload = allGreaterReleases.filter(r => minor(r.tag_name) > minor(component.version as string))[0];
+						releaseToDownload = allGreaterReleases.filter(r =>
+							major(r.tag_name) === major(component.version as string) && (
+								minor(r.tag_name) > minor(component.version as string) ||
+								patch(r.tag_name) > patch(component.version as string)
+							)
+						)[0];
 					} else {
-						releaseToDownload = allGreaterReleases.filter(r => patch(r.tag_name) > patch(component.version as string))[0];
+						releaseToDownload = allGreaterReleases.filter(r =>
+							major(r.tag_name) === major(component.version as string) && minor(r.tag_name) === minor(component.version as string) && 
+							patch(r.tag_name) > patch(component.version as string)
+						)[0];
 					}
 
 					if (!releaseToDownload) {
@@ -148,7 +157,11 @@ export class Crawler {
 			}
 
 			this.storage.updateCustomComponent(component);
-			console.log(`${component.name} downloaded to ${targetPath}`);
+			if (component.version !== oldVersion) {
+				console.log(`${component.name} updated from ${oldVersion} to ${component.version}`);
+			} else {
+				console.log(`${component.name} downloaded to ${targetPath}`);
+			}
 		} else {
 			console.log(`No new version available for component ${component.name}.`);
 		}
