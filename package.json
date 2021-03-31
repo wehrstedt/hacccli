@@ -4,7 +4,7 @@
   "main": "lib/cli/cli.js",
   "bin": {
     "haccli": "lib/cli/cli.js",
-    "hacccli": "libc/cli/cli.js"
+    "hacccli": "lib/cli/cli.js"
   },
   "repository": {
     "url": "https://github.com/wehrstedt/hacccli"
