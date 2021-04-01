@@ -85,6 +85,15 @@ export class Storage {
 		this.db.save();
 	}
 
+	public removeComponent(component: CustomComponent) {
+		const components = this.getCustomComponents();
+		this.db.push(
+			"/registered-components",
+			components.filter(c => c.url !== component.url),
+			true
+		);
+	}
+
 	public updateCustomComponent(component: CustomComponent) {
 		let index = -1;
 		const components = this.getCustomComponents();

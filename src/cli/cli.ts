@@ -314,6 +314,29 @@ async function addNewComponent() {
 	console.log(`\nDone. The custom component ${customComponent.name} was downloaded to '${customComponent.localPath}'.`);
 }
 
+async function removeComponent() {
+	const components = storage.getCustomComponents();
+	if (components.length > 0) {
+		const selection = await prompt([{
+			name: "componentsToDelete",
+			type: "checkbox",
+			message: "Please select the component(s) you want to remove:",
+			choices: components.map(c => c.name)
+		}]);
+
+		if (selection.componentsToDelete.length > 0) {
+			const componentsToDelete = components.filter(c => selection.componentsToDelete.indexOf(c.name) > -1);
+			for (const component of componentsToDelete) {
+				rm("-rf", join(component.localPath, component.name));
+				storage.removeComponent(component);
+			}
+		}
+	} else {
+		console.log("No components added yet.");
+		process.exit(0);
+	}
+}
+
 (async () => {
 
 	let credentials: any;
@@ -334,8 +357,12 @@ async function addNewComponent() {
 
 	const steps = [
 		"add a new custom component",
-		"fetch registered components"
+		"fetch registered components",
 	];
+
+	if (storage.getCustomComponents().length > 0) {
+		steps.push("remove a custom component");
+	}
 
 	const nextStep = args.fetch
 		? steps[1]
@@ -353,6 +380,10 @@ async function addNewComponent() {
 
 		case steps[1]:
 			await Crawler.FetchComponents(!args.fetch);
+			break;
+
+		case steps[2]:
+			await removeComponent();
 			break;
 	}
 
